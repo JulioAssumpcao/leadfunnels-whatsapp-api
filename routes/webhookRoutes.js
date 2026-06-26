@@ -2,13 +2,24 @@ const express = require("express");
 
 const router = express.Router();
 
+const {
+processEduzz,
+processHotmart,
+processKiwify,
+processPerfectPay,
+processStripe
+} = require("../services/webhookService");
+
+// ==========================================
+// EDUZZ
+// ==========================================
+
 router.post("/webhooks/eduzz", async (req, res) => {
 
 try {
 
 ```
-console.log("EDUZZ WEBHOOK");
-console.log(JSON.stringify(req.body, null, 2));
+await processEduzz(req.body);
 
 return res.status(200).json({
   success: true
@@ -18,6 +29,8 @@ return res.status(200).json({
 } catch (error) {
 
 ```
+console.error(error);
+
 return res.status(500).json({
   success: false,
   error: error.message
@@ -27,14 +40,17 @@ return res.status(500).json({
 }
 
 });
+
+// ==========================================
+// HOTMART
+// ==========================================
 
 router.post("/webhooks/hotmart", async (req, res) => {
 
 try {
 
 ```
-console.log("HOTMART WEBHOOK");
-console.log(JSON.stringify(req.body, null, 2));
+await processHotmart(req.body);
 
 return res.status(200).json({
   success: true
@@ -44,6 +60,8 @@ return res.status(200).json({
 } catch (error) {
 
 ```
+console.error(error);
+
 return res.status(500).json({
   success: false,
   error: error.message
@@ -53,14 +71,17 @@ return res.status(500).json({
 }
 
 });
+
+// ==========================================
+// KIWIFY
+// ==========================================
 
 router.post("/webhooks/kiwify", async (req, res) => {
 
 try {
 
 ```
-console.log("KIWIFY WEBHOOK");
-console.log(JSON.stringify(req.body, null, 2));
+await processKiwify(req.body);
 
 return res.status(200).json({
   success: true
@@ -70,6 +91,8 @@ return res.status(200).json({
 } catch (error) {
 
 ```
+console.error(error);
+
 return res.status(500).json({
   success: false,
   error: error.message
@@ -79,14 +102,17 @@ return res.status(500).json({
 }
 
 });
+
+// ==========================================
+// PERFECT PAY
+// ==========================================
 
 router.post("/webhooks/perfectpay", async (req, res) => {
 
 try {
 
 ```
-console.log("PERFECT PAY WEBHOOK");
-console.log(JSON.stringify(req.body, null, 2));
+await processPerfectPay(req.body);
 
 return res.status(200).json({
   success: true
@@ -96,6 +122,8 @@ return res.status(200).json({
 } catch (error) {
 
 ```
+console.error(error);
+
 return res.status(500).json({
   success: false,
   error: error.message
@@ -105,14 +133,17 @@ return res.status(500).json({
 }
 
 });
+
+// ==========================================
+// STRIPE
+// ==========================================
 
 router.post("/webhooks/stripe", async (req, res) => {
 
 try {
 
 ```
-console.log("STRIPE WEBHOOK");
-console.log(JSON.stringify(req.body, null, 2));
+await processStripe(req.body);
 
 return res.status(200).json({
   success: true
@@ -122,6 +153,8 @@ return res.status(200).json({
 } catch (error) {
 
 ```
+console.error(error);
+
 return res.status(500).json({
   success: false,
   error: error.message
@@ -129,6 +162,19 @@ return res.status(500).json({
 ```
 
 }
+
+});
+
+// ==========================================
+// TESTE
+// ==========================================
+
+router.get("/webhooks/test", async (req, res) => {
+
+res.json({
+success: true,
+message: "Webhook online"
+});
 
 });
 
