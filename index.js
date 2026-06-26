@@ -5,6 +5,7 @@ const instanceRoutes = require("./routes/instanceRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const groupRoutes = require("./routes/groupRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
+const webhookRoutes = require("./routes/webhookRoutes");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(instanceRoutes);
 app.use(messageRoutes);
 app.use(groupRoutes);
 app.use(mediaRoutes);
+app.use(webhookRoutes);
 
 const PORT = process.env.PORT || 2401;
 
