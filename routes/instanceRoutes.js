@@ -5,143 +5,139 @@ const path = require("path");
 const router = express.Router();
 
 const {
-sessions,
-connectInstance
+  sessions,
+  connectInstance
 } = require("../services/sessionService");
 
 router.get("/connect", async (req, res) => {
-try {
-const session = await connectInstance("principal");
+  try {
+    const session = await connectInstance("principal");
 
-```
-res.json({
-  success: true,
-  instanceId: "principal",
-  status: session.status,
-  qr: session.qr,
-  phone: session.phone,
-  name: session.name
-});
-```
-
-} catch (error) {
-res.status(500).json({
-success: false,
-error: error.message
-});
-}
+    res.json({
+      success: true,
+      instanceId: "principal",
+      status: session.status,
+      qr: session.qr,
+      phone: session.phone,
+      name: session.name
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 router.post("/instances/:instanceId/connect", async (req, res) => {
-try {
-const { instanceId } = req.params;
+  try {
+    const { instanceId } = req.params;
 
-```
-const session = await connectInstance(instanceId);
+    const session = await connectInstance(instanceId);
 
-res.json({
-  success: true,
-  instanceId,
-  status: session.status,
-  qr: session.qr,
-  phone: session.phone,
-  name: session.name
-});
-```
-
-} catch (error) {
-res.status(500).json({
-success: false,
-error: error.message
-});
-}
+    res.json({
+      success: true,
+      instanceId,
+      status: session.status,
+      qr: session.qr,
+      phone: session.phone,
+      name: session.name
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 router.post("/instances/:instanceId/disconnect", async (req, res) => {
-try {
-const { instanceId } = req.params;
+  try {
+    const { instanceId } = req.params;
 
-```
-const session = sessions[instanceId];
+    const session = sessions[instanceId];
 
-if (!session) {
-  return res.json({
-    success: true,
-    message: "Instância já desconectada"
-  });
-}
+    if (!session) {
+      return res.json({
+        success: true,
+        instanceId,
+        status: "disconnected"
+      });
+    }
 
-try {
-  await session.sock.logout();
-} catch (e) {
-  console.log("Erro logout:", e.message);
-}
+    try {
+      await session.sock.logout();
+    } catch (e) {
+      console.log("Erro logout:", e.message);
+    }
 
-delete sessions[instanceId];
+    session.qr = null;
+    session.phone = null;
+    session.name = null;
+    session.status = "disconnected";
 
-const sessionPath = path.join(
-  process.cwd(),
-  "sessions",
-  instanceId
-);
+    delete sessions[instanceId];
 
-if (fs.existsSync(sessionPath)) {
-  fs.rmSync(sessionPath, {
-    recursive: true,
-    force: true
-  });
-}
+    const sessionPath = path.join(
+      process.cwd(),
+      "sessions",
+      instanceId
+    );
 
-res.json({
-  success: true,
-  instanceId,
-  status: "disconnected"
-});
-```
+    if (fs.existsSync(sessionPath)) {
+      fs.rmSync(sessionPath, {
+        recursive: true,
+        force: true
+      });
+    }
 
-} catch (error) {
+    res.json({
+      success: true,
+      instanceId,
+      status: "disconnected"
+    });
 
-```
-res.status(500).json({
-  success: false,
-  error: error.message
-});
-```
+  } catch (error) {
 
-}
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+
+  }
 });
 
 router.get("/instances", (req, res) => {
-res.json(
-Object.keys(sessions).map((id) => ({
-instanceId: id,
-status: sessions[id].status,
-phone: sessions[id].phone,
-name: sessions[id].name,
-hasQr: !!sessions[id].qr
-}))
-);
+  res.json(
+    Object.keys(sessions).map((id) => ({
+      instanceId: id,
+      status: sessions[id].status,
+      phone: sessions[id].phone,
+      name: sessions[id].name,
+      hasQr: !!sessions[id].qr
+    }))
+  );
 });
 
 router.get("/instances/:instanceId/status", (req, res) => {
-const { instanceId } = req.params;
+  const { instanceId } = req.params;
 
-const session = sessions[instanceId];
+  const session = sessions[instanceId];
 
-if (!session) {
-return res.json({
-instanceId,
-status: "not_created"
-});
-}
+  if (!session) {
+    return res.json({
+      instanceId,
+      status: "not_created"
+    });
+  }
 
-res.json({
-instanceId,
-status: session.status,
-qr: session.qr,
-phone: session.phone,
-name: session.name
-});
+  res.json({
+    instanceId,
+    status: session.status,
+    qr: session.qr,
+    phone: session.phone,
+    name: session.name
+  });
 });
 
 module.exports = router;
