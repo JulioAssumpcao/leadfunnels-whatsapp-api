@@ -7,6 +7,7 @@ const groupRoutes = require("./routes/groupRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const webhookRoutes = require("./routes/webhookRoutes");
 const leadRoutes = require("./routes/leadRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(groupRoutes);
 app.use(mediaRoutes);
 app.use(webhookRoutes);
 app.use(leadRoutes);
+app.use(chatRoutes);
 
 const PORT = process.env.PORT || 2401;
 
